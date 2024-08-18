@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Shery Panagiotaki - Online Calculator</title>
+		<link href="calculator.css" rel="stylesheet" type="text/css"></link>
+	</head>
+	<body>
+		<div id="r01"><h1>Online calculator</h1><img src="calculator_1.jpg" alt="title_photo" id="photo1">
+			<p id="p2">Project by Shery Panagiotaki - @Copyright 2022</p></div>
+			<input id="r0" type="button" value="Project Info" onclick="about()"></input>
+		<div id="start">
+			<form>
+				<p id="p1">Shery Panagiotaki - Online Calculator</p><div id="monitor">
+				<p id="screen2" type="text" maxlength="12"></p><p id="screen" type="text" maxlength="12"></p></div>
+				<div id="r1"><input type="button" class="num" id="cls" value="C-CE" onclick="clearScreen()">
+					<input type="button" class="num" class="numbers" id="not" value="+/-" onclick="numbers(12)">
+					<input type="button" class="numbers" id="sqrt" value="√" onclick="numbers(10)">
+					<input type="button" class="numbers" id="mod" value="%" onclick="numbers(11)">
+				</div>
+				<div id="r2"><input type="button" id="mrc" value="MRC"><input type="button" id="mm" value="M-">
+					<input type="button" id="mp" value="M+"><input type="button" id="division" value="÷" onclick="operator('÷')">
+				</div>
+				<div id="r3"><input type="button" class="num" class="numbers" id="seven" value="7" onclick="numbers(7)">
+					<input type="button" class="num" class="numbers" id="eight" value="8" onclick="numbers(8)">
+					<input type="button" class="num" class="numbers" id="nine" value="9" onclick="numbers(9)">
+					<input type="button" id="mult" value="x" onclick="operator('*')">
+				</div>
+				<div id="r4"><input type="button" class="num" class="numbers" id="four" value="4" onclick="numbers(4)">
+					<input type="button" class="num" class="numbers" id="five" value="5" onclick="numbers(5)">
+					<input type="button" class="num" class="numbers" id="six" value="6" onclick="numbers(6)">
+					<input type="button" id="abstr" value="-" onclick="operator('-')">
+					</div>
+				<div id="r5"><input type="button" class="num" class="numbers" id="one" value="1" onclick="numbers(1)">
+					<input type="button" class="num" class="numbers" id="two" value="2" onclick="numbers(2)">
+					<input type="button" class="num" class="numbers" id="three" value="3" onclick="numbers(3)">
+				</div>
+				<div>
+					<input type="button" id="plus" value="+" onclick="operator('+')">
+				</div>
+				<div id="r6">
+					<input type="button" class="num" id="zero" class="numbers" value="0" onclick="numbers(0)">
+					<input type="button" class="num" class="numbers" id="dot" value="." onclick="numbers(13)">
+					<input type="button" id="equal" value="=" onclick="calculate()">
+				</div>
+			</form>
+		</div>
+		<div>			
+			<div id="project"><p id="p3">Contact via e-mail: sherypanagiotaki@yahoo.com</p></div>
+		</div>
+		<script>						
+            var op=""; //κρατάει τον operator που είχε δώσει τελευταία ο χρήστης, χρησιμοποιείται για διαδοχικές πράξεις
+            var temp1=""; //κρατάει το προσωρινό αποτέλεσμα που εμφανίζεται ΠΑΝΤΑ στην screen2
+            var temp2=""; //κρατάει το προσωρινό αποτέλεσμα που εμφανίζεται ΠΑΝΤΑ στην screen την στιγμή που πατιέται κάποιος operator
+			var total=""; //κρατάει το τελικό αποτέλεσμα (μόλις ο χρήστης πατήσει '=') και το εμφανίζει στην screen
+            var count=0; //0--> 1η είσοδο operator, 1--> αν έχουμε ήδη ενδιάσμεσα αποτελέσματα στη δευτερεύουσα οθόνη
+			var mem=0; //κρατάει το προσωρινό αποτέλεσμα της μν΄ήμης στη δευτερεύουσα οθόνη
+			var flag=0; //0--> Καθαρισμός προσωρινής μνήμης, 1--> Υπολογισμός αποτελέσματος προσωρινής μνήμης		
+
+			document.getElementById("mrc").addEventListener("click", function(){ // Υπολογισμός τελικού αποτελέσματος και καθαρισμός μνήμης (MRC)								
+				if(flag==0){//Καθαρισμός μνήμης
+					mem="";
+					clearScreen();
+					flag=1;
+				}else{//Υπολογισμός τελικού αποτελέσματος
+					document.getElementById("screen").innerHTML=mem;
+					temp2=mem;		
+					temp1="";
+					document.getElementById("screen2").innerHTML=temp1;
+					mem=count=0;
+					flag=0;
+				}
+			});
+
+			document.getElementById("mm").addEventListener("click", function(){ //αφαίρεση από τη μν΄ήμη (M-)
+				if(count==1){ //Παράγονται ενδιάμεσα αποτελέσματα πριν να αποθηκευτούν στην προσωρινή μνήμη					
+					calculate();
+					temp1=total;
+					temp2="";
+					document.getElementById("screen2").innerHTML="<span style='color:red; font-size:.7em;'>M</span>-"+temp1; //Τοποθέτηση αρνητικού προσήμου μπορστά επειδή πατήθηκε το πλ΄κτρο Μ-, επομένως κρατά αρνητική τιμή
+					mem-=+temp1; //στην προσωρινή μνήμη καταγράφηκε το αποτέλεσμα διαδοχικών πράξεων, το οποίο αφαιρέθηκε από το προηγούμενο αποτέλεσμα στην μνήμη				
+				}else{																
+					document.getElementById("screen2").innerHTML="<span style='color:red; font-size:.7em;'>M</span>"+ -temp2;
+					mem-=+temp2; 	
+					temp1=temp2="";
+					document.getElementById("screen").innerHTML=temp2;
+				}
+				count=0;
+				flag=1;
+			});		
+			
+			document.getElementById("mp").addEventListener("click", function(){ //πρόσθεση στη μν΄ήμη (M+)
+				mem=+mem; //cast to number
+				if(count==1){ //Παράγονται ενδιάμεσα αποτελέσματα πριν να αποθηκευτούν στην προσωρινή μνήμη						
+					//temp1=mem;	
+					//temp2=document.getElementById("screen");								
+					calculate();
+					temp1=total;
+					temp2="";								
+					document.getElementById("screen2").innerHTML="<span style='color:red; font-size:.7em;'>M</span>"+temp1;
+					mem+=+temp1; //στην προσωρινή μνήμη καταγράφηκε το αποτέλεσμα διαδοχικών πράξεων, το οποίο προστέθηκε στο προηγούμενο αποτέλεσμα στην μνήμη
+				}else{									
+					document.getElementById("screen2").innerHTML="<span style='color:red; font-size:.7em;'>M</span>"+ temp2;
+					mem+=+temp2; 	
+					temp1=temp2="";
+					document.getElementById("screen").innerHTML=temp2;
+				}
+				count=0;
+				flag=1;
+			});				
+
+			function clearScreen(){	//καθαρισμός οθόνης (ΟΚ)
+                document.getElementById("screen").style.color="#000000"; //επαναφορά στα μαύρα γράμματα   
+                temp1=temp2=mem="";
+				document.getElementById("screen").innerHTML = "0";
+				document.getElementById("screen2").innerHTML = temp1;
+				count=0;
+			}
+
+			function numbers(x){
+				let y=document.getElementById("screen").innerHTML;
+				if(y==="0"){
+					y="";
+				}	
+				if (x>=0 && x<=9){
+					temp2 += x;  //πέρασμα αριθμών (ψηφίων) (ΟΚ)					
+				}else if(x==13){
+					if (temp2.includes('.')){  //έλεγχος υποδιαστολής (ΟΚ)
+						temp2 += '';
+					}else{
+						temp2 += '.';
+					}
+				}else if(x==10){	//τετραγωνική ρίζα (ΟΚ)
+					let a=+temp2;
+					if(+a>=0){
+						let b=Math.pow(+a, 0.5);
+						temp2=b;
+					}
+				}else if(x==11){	//ποσοστό επί τοις εκατό (%) (ΟΚ)
+					temp2=+temp2*0.01;					
+				}else if(x==12){	//αντιστροφή προσήμου (+/-) (OK)					
+					if(mem==+mem && mem!=0){
+						mem=-mem;
+						document.getElementById("screen2").innerHTML="<span style='color:red; font-size:.7em;'>M</span>"+mem;
+					}else{
+						temp2=- +temp2;
+					}					
+				}
+				if(document.getElementById("screen").innerHTML.toString().length>12){	//έλεγχος πλήθους ψηφίων (εδώ επιτρέπονται 12 ψηφία μαζί με την υποδιαστολή) (ΟΚ)			
+					let i=document.getElementById("screen").innerHTML.toString().length;
+					while(document.getElementById("screen").innerHTML.toString().length>12){
+						document.getElementById("screen").innerHTML=parseFloat(document.getElementById("screen").innerHTML).toPrecision(i);
+						i--;
+					}	
+				}
+                document.getElementById("screen").innerHTML=temp2;                
+			};
+
+            function calculate(){                
+                temp1=+temp1;
+                temp2=+temp2;                
+                if(temp2==0 && op==='÷'){
+                    temp1=temp2="";
+                    document.getElementById("screen").innerHTML="Division By Zero";
+                    document.getElementById("screen").style.color="#ff0000"; //κόκκινα γράμματα
+                    document.getElementById("screen").style.fontSize=".8em";
+                    document.getElementById("screen2").innerHTML=temp1;
+                }else{
+                    switch(op){
+                        case '+': 
+                            total=temp1+temp2;
+                            break;
+                        case '-': 
+                            total=temp1-temp2;
+                            break; 
+                        case '*': 
+                            total=temp1*temp2;
+                            break; 
+                        case '÷': 
+                            total=temp1/temp2;
+                            break;                                                                                
+                    } 
+					temp1=total;
+					temp2="";
+                    document.getElementById("screen2").innerHTML=temp1;    
+                    document.getElementById("screen").innerHTML=temp2; //καθαρισμός δευτερεύουσας οθόνης              
+                }                             
+            }
+         
+            function operator(x){ //operators                 
+                if(count==1){ //Δεν είναι 1η είσοδος του χρήστη υπάρχει ΗΔΗ operator από πριν και θα χρειαστεί να υπολογιστεί ενδιάμεσο αποτέλεσμα
+					calculate();
+                }else if(temp2.length==0 && x=='-'){ //Περίπτωση αρνητικού προσήμου σε πρώτη είσοδο του χρήστη
+                    temp2=x;
+                    count=0; //Επαναφέρουμε τον counter στην τιμή 0, διότι Δεν έχει γίνει κάποια πράξη παρόλο που έχουμε ήδη operator ('-'), ο οποίος βρίσκεται στην αρχή της έκφρασης
+                    document.getElementById("screen").innerHTML=x;
+                }else{//Πρώτη είσοδος χρήστη
+                    temp2=document.getElementById("screen").innerHTML;
+                    temp1=temp2; //Περνά η τιμή της screen στην screen2 με αυτόν τον τρόπο
+                    document.getElementById("screen2").innerHTML=temp1;                    
+                    temp2=""; //Καθαρισμός κύριας οθόνης (screen)
+                    document.getElementById("screen").innerHTML=temp2;
+                    count=1;
+                }
+                op=x; //Νέος operator γίνεται ο τελευταίος operator που έδωσε ο χρήστης για την επόμενη πράξη που θα εκτελεστεί
+
+            }	
+						
+			function about(){
+				alert("Programmed, designed and developed by Shery Panagiotaki,\n@Copyright 2022\n\nBuilt with HTML, CSS and Javascript\n\nContact via e-mail: sherypanagiotaki@yahoo.com");
+			}
+		</script>
+	</body>
+</html>
